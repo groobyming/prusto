@@ -1,6 +1,9 @@
 use std::fmt;
 
 use chrono::naive::{NaiveDate, NaiveDateTime, NaiveTime};
+use chrono::{DateTime, FixedOffset, ParseResult, Utc};
+use chrono_tz::Tz;
+use chrono_tz::Tz::UTC;
 use serde::de::{self, DeserializeSeed, Deserializer, Visitor};
 
 use super::{Context, Presto, PrestoTy};
@@ -85,4 +88,13 @@ gen_date_time!(
     "%H:%M:%S%.3f",
     NaiveTime::from_hms_opt(0, 0, 0).unwrap(),
     "naive date time"
+);
+gen_date_time!(
+    DateTime<FixedOffset>,
+    DateTimeWithZoneSeed,
+    PrestoTy::TimestampWithTimeZone,
+    "%Y-%m-%d %H:%M:%S%.3f %:z",
+       DateTime::parse_from_str("1970-01-01 00:00:00.000 +00:00",
+        "%Y-%m-%d %H:%M:%S%.3f %:z").unwrap(),
+    "date time with time zone"
 );

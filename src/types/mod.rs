@@ -47,7 +47,7 @@ use iterable::*;
 use serde::de::{DeserializeSeed, IntoDeserializer};
 use serde::Serialize;
 
-use crate::PrestoTy::Uuid;
+use crate::PrestoTy::{Json, TimestampWithTimeZone, Uuid};
 use crate::{
     ClientTypeSignatureParameter, Column, NamedTypeSignature, RawPrestoTy, RowFieldName,
     TypeSignature,
@@ -128,7 +128,9 @@ fn extract(target: &PrestoTy, provided: &PrestoTy) -> Result<Vec<(usize, Vec<usi
         (Boolean, Boolean) => Ok(vec![]),
         (Date, Date) => Ok(vec![]),
         (Time, Time) => Ok(vec![]),
+        (TimeWithTimeZone, TimeWithTimeZone) => Ok(vec![]),
         (Timestamp, Timestamp) => Ok(vec![]),
+        (TimestampWithTimeZone, TimestampWithTimeZone) => Ok(vec![]),
         (IntervalYearToMonth, IntervalYearToMonth) => Ok(vec![]),
         (IntervalDayToSecond, IntervalDayToSecond) => Ok(vec![]),
         (PrestoInt(_), PrestoInt(_)) => Ok(vec![]),
@@ -181,7 +183,9 @@ fn extract(target: &PrestoTy, provided: &PrestoTy) -> Result<Vec<(usize, Vec<usi
 pub enum PrestoTy {
     Date,
     Time,
+    TimeWithTimeZone,
     Timestamp,
+    TimestampWithTimeZone,
     Uuid,
     IntervalYearToMonth,
     IntervalDayToSecond,
@@ -223,7 +227,9 @@ impl PrestoTy {
         let ty = match sig.raw_type {
             RawPrestoTy::Date => PrestoTy::Date,
             RawPrestoTy::Time => PrestoTy::Time,
+            RawPrestoTy::TimeWithTimeZone => PrestoTy::TimeWithTimeZone,
             RawPrestoTy::Timestamp => PrestoTy::Timestamp,
+            RawPrestoTy::TimestampWithTimeZone => PrestoTy::TimestampWithTimeZone,
             RawPrestoTy::IntervalYearToMonth => PrestoTy::IntervalYearToMonth,
             RawPrestoTy::IntervalDayToSecond => PrestoTy::IntervalDayToSecond,
             RawPrestoTy::Unknown => PrestoTy::Unknown,
@@ -342,7 +348,9 @@ impl PrestoTy {
             ],
             Date => vec![],
             Time => vec![],
+            TimeWithTimeZone => vec![],
             Timestamp => vec![],
+            TimestampWithTimeZone => vec![],
             IntervalYearToMonth => vec![],
             IntervalDayToSecond => vec![],
             Option(t) => return t.into_type_signature(),
@@ -387,7 +395,9 @@ impl PrestoTy {
             Option(t) => t.full_type(),
             Date => RawPrestoTy::Date.to_str().into(),
             Time => RawPrestoTy::Time.to_str().into(),
+            TimeWithTimeZone=> RawPrestoTy::TimeWithTimeZone.to_str().into(),
             Timestamp => RawPrestoTy::Timestamp.to_str().into(),
+            TimestampWithTimeZone => RawPrestoTy::TimestampWithTimeZone.to_str().into(),
             IntervalYearToMonth => RawPrestoTy::IntervalYearToMonth.to_str().into(),
             IntervalDayToSecond => RawPrestoTy::IntervalDayToSecond.to_str().into(),
             Boolean => RawPrestoTy::Boolean.to_str().into(),
@@ -429,7 +439,9 @@ impl PrestoTy {
             Unknown => RawPrestoTy::Unknown,
             Date => RawPrestoTy::Date,
             Time => RawPrestoTy::Time,
+            TimeWithTimeZone=> RawPrestoTy::TimeWithTimeZone,
             Timestamp => RawPrestoTy::Timestamp,
+            TimestampWithTimeZone => RawPrestoTy::TimestampWithTimeZone,
             IntervalYearToMonth => RawPrestoTy::IntervalYearToMonth,
             IntervalDayToSecond => RawPrestoTy::IntervalDayToSecond,
             Decimal(_, _) => RawPrestoTy::Decimal,
